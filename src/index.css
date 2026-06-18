@@ -138,6 +138,32 @@ h1, h2, h3 { margin: 0 0 10px; }
 .forme-D { background: var(--rouge); }
 .forme-vide { font-size: 11px; color: var(--muted); }
 
+/* ---------- Onglets de type de pari ---------- */
+.type-tabs { display: flex; gap: 6px; margin-top: 12px; }
+.type-tab {
+  flex: 1; padding: 8px 4px; border-radius: 8px;
+  background: var(--card-2); border: 1px solid var(--border);
+  font-size: 12px; font-weight: 700; color: var(--muted);
+  cursor: pointer; margin: 0;
+}
+.type-tab.actif { background: var(--accent); color: #fff; border-color: var(--accent); }
+.marche { margin-top: 10px; }
+.cote-info { font-size: 13px; color: var(--muted); margin: 8px 0; }
+.cote-info strong { color: var(--accent); }
+.btn-ajouter {
+  background: var(--card-2); color: var(--accent); border: 1.5px solid var(--accent);
+  padding: 10px; font-size: 14px;
+}
+.dans-coupon { color: var(--vert); font-size: 12px; font-weight: 700; margin-top: 8px; text-align: center; }
+.choix-mini { display: flex; gap: 6px; margin-bottom: 8px; }
+.choix-mini button {
+  flex: 1; margin: 0; padding: 8px 4px; font-size: 13px;
+  background: var(--card-2); color: var(--text); border: 1.5px solid var(--border);
+}
+.choix-mini button.actif { background: var(--accent); color: #fff; border-color: var(--accent); }
+.saisie-score { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 8px 0; }
+.saisie-score input { width: 60px; height: 50px; text-align: center; font-size: 22px; font-weight: 700; }
+
 /* ---------- Cotes (boutons 1 / N / 2) ---------- */
 .cotes { display: flex; gap: 8px; margin-top: 12px; }
 .cote-btn {
@@ -178,6 +204,9 @@ h1, h2, h3 { margin: 0 0 10px; }
 .coupon-ligne .sel { color: var(--accent-2); font-weight: 700; font-size: 13px; }
 .coupon-mise { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
 .coupon-mise input { width: 90px; }
+.coupon-score { display: flex; align-items: center; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.coupon-score input { width: 50px; text-align: center; }
+.coupon-score .tiret { font-weight: 700; color: var(--muted); }
 .coupon-gain { font-size: 12px; color: var(--vert); margin-top: 4px; font-weight: 600; }
 .coupon-total {
   display: flex; justify-content: space-between; font-weight: 800;

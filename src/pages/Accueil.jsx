@@ -3,6 +3,18 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import { useAuth } from '../context/AuthContext'
 
+// Affiche la forme récente (ex : "VVNDV") en pastilles colorées
+function FormeMini({ texte }) {
+  if (!texte) return null
+  return (
+    <div className="forme">
+      {texte.split('').map((r, i) => (
+        <span className={`forme-pastille forme-${r}`} key={i}>{r}</span>
+      ))}
+    </div>
+  )
+}
+
 export default function Accueil() {
   const { profil, deconnexion } = useAuth()
   const [classement, setClassement] = useState([])
@@ -20,7 +32,7 @@ export default function Accueil() {
 
     const { data: matchs } = await supabase
       .from('matches')
-      .select('id, date_match, poule, score_domicile, cote_domicile, cote_nul, cote_exterieur, dom:equipe_domicile(nom), ext:equipe_exterieur(nom)')
+      .select('id, date_match, poule, score_domicile, cote_domicile, cote_nul, cote_exterieur, dom:equipe_domicile(nom, forme), ext:equipe_exterieur(nom, forme)')
       .order('date_match', { ascending: true })
 
     const aVenir = (matchs ?? []).filter((m) => m.score_domicile === null)
@@ -82,9 +94,15 @@ export default function Accueil() {
                 {m.poule && <span className="poule-badge">{m.poule}</span>}
                 <div className="match-date">📅 {new Date(m.date_match).toLocaleString('fr-FR')}</div>
                 <div className="match-equipes">
-                  <div className="equipe"><div className="equipe-nom">{m.dom?.nom}</div></div>
+                  <div className="equipe">
+                    <div className="equipe-nom">{m.dom?.nom}</div>
+                    <FormeMini texte={m.dom?.forme} />
+                  </div>
                   <div className="vs">VS</div>
-                  <div className="equipe"><div className="equipe-nom">{m.ext?.nom}</div></div>
+                  <div className="equipe">
+                    <div className="equipe-nom">{m.ext?.nom}</div>
+                    <FormeMini texte={m.ext?.forme} />
+                  </div>
                 </div>
                 <div className="cotes">
                   <div className="cote-btn"><span className="label">1</span><span className="valeur">{Number(m.cote_domicile).toFixed(2)}</span></div>
