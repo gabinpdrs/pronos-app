@@ -1,0 +1,17 @@
+{
+  "name": "Pronos entre amis",
+  "short_name": "Pronos",
+  "description": "Pronostics Coupe du Monde 2026 entre amis",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f6fb",
+  "theme_color": "#e11d48",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any maskable"
+    }
+  ]
+}
