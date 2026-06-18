@@ -5,15 +5,14 @@ import Navbar from './components/Navbar'
 
 import Login from './pages/Login'
 import ChangePassword from './pages/ChangePassword'
-import Matchs from './pages/Matchs'
-import Classement from './pages/Classement'
-import Statistiques from './pages/Statistiques'
+import Accueil from './pages/Accueil'
+import Pronos from './pages/Pronos'
+import Resultats from './pages/Resultats'
 
 export default function App() {
   const { session, profil } = useAuth()
 
-  // On affiche la barre de navigation seulement quand on est connecté
-  // ET que le mot de passe a déjà été changé
+  // Navbar visible seulement une fois connecté et mot de passe changé
   const afficherNavbar = session && profil && !profil.must_change_password
 
   return (
@@ -23,9 +22,9 @@ export default function App() {
         <Route path="/changer-mot-de-passe" element={<ChangePassword />} />
 
         {/* Pages protégées */}
-        <Route path="/" element={<ProtectedRoute><Matchs /></ProtectedRoute>} />
-        <Route path="/classement" element={<ProtectedRoute><Classement /></ProtectedRoute>} />
-        <Route path="/statistiques" element={<ProtectedRoute><Statistiques /></ProtectedRoute>} />
+        <Route path="/" element={<ProtectedRoute><Accueil /></ProtectedRoute>} />
+        <Route path="/paris" element={<ProtectedRoute><Pronos /></ProtectedRoute>} />
+        <Route path="/resultats" element={<ProtectedRoute><Resultats /></ProtectedRoute>} />
       </Routes>
 
       {afficherNavbar && <Navbar />}

@@ -41,8 +41,10 @@ export default function Login() {
   }
 
   return (
-    <div className="container">
-      <h1>⚽ Pronos entre amis</h1>
+    <div className="centre">
+      <div className="logo-titre">
+        <h1>⚽ Pronos entre amis</h1>
+      </div>
       <div className="card">
         <h2>Connexion</h2>
         <form onSubmit={seConnecter}>

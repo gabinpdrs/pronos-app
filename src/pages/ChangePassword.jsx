@@ -41,10 +41,9 @@ export default function ChangePassword() {
     }
 
     // 2) On note dans le profil que le mot de passe a été changé
-    const { error: err2 } = await supabase
-      .from('profiles')
-      .update({ must_change_password: false })
-      .eq('id', session.user.id)
+    //    (via une fonction sécurisée : les joueurs ne peuvent pas modifier
+    //     leur profil directement, pour éviter de tricher sur les jetons)
+    const { error: err2 } = await supabase.rpc('marquer_mdp_change')
 
     setEnCours(false)
 
