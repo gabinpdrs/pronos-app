@@ -1,0 +1,169 @@
+/* ===== Styles globaux, simples et adaptés au mobile ===== */
+
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --bg: #f1f5f9;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --success: #16a34a;
+  --danger: #dc2626;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Conteneur centré, max 500px : parfait pour le mobile */
+.container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 16px;
+  padding-bottom: 80px; /* espace pour la barre de navigation du bas */
+}
+
+h1, h2, h3 {
+  margin: 0 0 12px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+  margin-top: 10px;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--primary);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+button:hover {
+  background: var(--primary-dark);
+}
+
+button.secondaire {
+  background: #475569;
+}
+
+.message-erreur {
+  color: var(--danger);
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.message-succes {
+  color: var(--success);
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+/* Petites lignes pour saisir un score : [ - ] */
+.ligne-score {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ligne-score input {
+  text-align: center;
+}
+
+/* Barre de navigation fixée en bas (style appli mobile) */
+.navbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  background: #fff;
+  border-top: 1px solid var(--border);
+  padding: 8px 0;
+}
+
+.navbar a {
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+  flex: 1;
+}
+
+.navbar a.actif {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* Tableau du classement */
+.rang {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.rang:last-child {
+  border-bottom: none;
+}
+
+.rang .position {
+  font-weight: 700;
+  width: 30px;
+}
+
+.points {
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #e0e7ff;
+  color: var(--primary-dark);
+}
