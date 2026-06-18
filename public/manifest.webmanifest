@@ -8,8 +8,8 @@
   "theme_color": "#1d4ed8",
   "icons": [
     {
-      "src": "/icon.png",
-      "type": "image/png",
+      "src": "/icon.webp",
+      "type": "image/webp",
       "sizes": "512x512",
       "purpose": "any maskable"
     }
