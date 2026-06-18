@@ -65,6 +65,11 @@ export default function Resultats() {
               classement.map((j, i) => (
                 <div className="rang" key={j.user_id}>
                   <span className={`rang-pos ${i < 3 ? 'top' : ''}`}>{i + 1}</span>
+                  <span className="rang-avatar">
+                    {j.photo_url
+                      ? <img className="avatar-img" src={j.photo_url} alt={j.prenom} />
+                      : (j.prenom ? j.prenom.charAt(0).toUpperCase() : '?')}
+                  </span>
                   <span className="rang-nom">
                     {j.prenom}
                     {j.prenom === profil?.prenom && <span className="badge-toi">toi</span>}

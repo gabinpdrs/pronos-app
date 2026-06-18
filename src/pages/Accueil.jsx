@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import { useAuth } from '../context/AuthContext'
 
-// Affiche la forme récente (ex : "VVNDV") en pastilles colorées
+// Forme récente (ex : "VVNDV") en pastilles colorées
 function FormeMini({ texte }) {
   if (!texte) return null
   return (
@@ -16,15 +16,15 @@ function FormeMini({ texte }) {
 }
 
 export default function Accueil() {
-  const { profil, deconnexion } = useAuth()
+  const { session, profil, deconnexion, rafraichirProfil } = useAuth()
   const [classement, setClassement] = useState([])
   const [prochains, setProchains] = useState([])
   const [chargement, setChargement] = useState(true)
+  const [photoMsg, setPhotoMsg] = useState('')
   const navigate = useNavigate()
 
   async function charger() {
     setChargement(true)
-
     const { data: clt } = await supabase
       .from('classement')
       .select('*')
@@ -36,15 +36,36 @@ export default function Accueil() {
       .order('date_match', { ascending: true })
 
     const aVenir = (matchs ?? []).filter((m) => m.score_domicile === null)
-
     setClassement(clt ?? [])
     setProchains(aVenir.slice(0, 4))
     setChargement(false)
   }
 
-  useEffect(() => {
-    charger()
-  }, [])
+  useEffect(() => { charger() }, [])
+
+  // Envoi d'une photo de profil
+  async function onPhoto(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setPhotoMsg('Envoi de la photo...')
+    const ext = (file.name.split('.').pop() || 'png').toLowerCase()
+    const chemin = `${session.user.id}.${ext}`
+
+    const { error: upErr } = await supabase.storage
+      .from('avatars')
+      .upload(chemin, file, { upsert: true, contentType: file.type })
+    if (upErr) { setPhotoMsg('Erreur : ' + upErr.message); return }
+
+    const { data } = supabase.storage.from('avatars').getPublicUrl(chemin)
+    const url = `${data.publicUrl}?t=${Date.now()}` // anti-cache
+
+    const { error: rpcErr } = await supabase.rpc('set_photo', { p_url: url })
+    if (rpcErr) { setPhotoMsg('Erreur : ' + rpcErr.message); return }
+
+    await rafraichirProfil()
+    await charger()
+    setPhotoMsg('✅ Photo mise à jour !')
+  }
 
   const top3 = classement.slice(0, 3)
   const coupe = ['🥇', '🥈', '🥉']
@@ -53,19 +74,30 @@ export default function Accueil() {
   return (
     <div className="container">
       <header className="app-header">
-        <div>
-          <h1>⚽ Pronos<span style={{ color: 'var(--accent-2)' }}>Cup</span></h1>
-          <p>Salut {profil?.prenom} 👋</p>
-          <button className="btn-deco" onClick={deconnexion}>Déconnexion</button>
+        <div className="header-user">
+          <label className="header-avatar" title="Changer ma photo">
+            {profil?.photo_url
+              ? <img className="avatar-img" src={profil.photo_url} alt="moi" />
+              : initiale(profil?.prenom)}
+            <input type="file" accept="image/*" onChange={onPhoto} style={{ display: 'none' }} />
+          </label>
+          <div>
+            <h1>⚽ Pronos<span style={{ color: '#ffe2e8' }}>Cup</span></h1>
+            <p>Salut {profil?.prenom} 👋</p>
+          </div>
         </div>
-        <div className="solde">🪙 {profil?.jetons ?? 0}</div>
+        <div style={{ textAlign: 'right' }}>
+          <div className="solde">🪙 {profil?.jetons ?? 0}</div>
+          <button className="btn-deco" onClick={deconnexion}>Déco</button>
+        </div>
       </header>
+
+      {photoMsg && <p className="message-succes">{photoMsg}</p>}
 
       {chargement ? (
         <p className="muted">Chargement...</p>
       ) : (
         <>
-          {/* ---------- PODIUM ---------- */}
           <div className="section-titre">🏆 Le podium</div>
           <div className="card">
             {top3.length === 0 ? (
@@ -74,7 +106,11 @@ export default function Accueil() {
               <div className="podium">
                 {top3.map((j, i) => (
                   <div className={`podium-place place-${i + 1}`} key={j.user_id}>
-                    <div className="podium-avatar">{initiale(j.prenom)}</div>
+                    <div className="podium-avatar">
+                      {j.photo_url
+                        ? <img className="avatar-img" src={j.photo_url} alt={j.prenom} />
+                        : initiale(j.prenom)}
+                    </div>
                     <div className="podium-nom">{j.prenom}</div>
                     <div className="podium-pts">🪙 {j.jetons}</div>
                     <div className="podium-socle">{coupe[i]}</div>
@@ -82,9 +118,11 @@ export default function Accueil() {
                 ))}
               </div>
             )}
+            <p className="muted" style={{ textAlign: 'center', marginTop: 10, marginBottom: 0 }}>
+              👆 Touche ta photo en haut à gauche pour la changer
+            </p>
           </div>
 
-          {/* ---------- PROCHAINS MATCHS ---------- */}
           <div className="section-titre">🎲 Prochains matchs</div>
           {prochains.length === 0 ? (
             <div className="card"><p className="muted">Aucun match à venir.</p></div>
