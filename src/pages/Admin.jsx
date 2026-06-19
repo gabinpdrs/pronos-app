@@ -14,13 +14,21 @@ export default function Admin() {
     setChargement(true)
     const { data: m } = await supabase
       .from('matches')
-      .select('id, date_match, poule, dom:equipe_domicile(nom), ext:equipe_exterieur(nom)')
+      .select('id, date_match, poule, cote_domicile, cote_nul, cote_exterieur, cote_score, dom:equipe_domicile(nom), ext:equipe_exterieur(nom)')
       .is('score_domicile', null)
       .order('date_match', { ascending: true })
     const { data: j } = await supabase.from('profiles').select('id, prenom, jetons').order('prenom')
     setMatchs(m ?? [])
     setJoueurs(j ?? [])
     setChargement(false)
+  }
+
+  async function recalculerCotes() {
+    setMsg(null)
+    const { data, error } = await supabase.rpc('recalculer_cotes')
+    if (error) { setMsg({ type: 'erreur', texte: error.message }); return }
+    setMsg({ type: 'succes', texte: `✅ Cotes recalculées (${data ?? 0} match(s)).` })
+    await charger()
   }
   useEffect(() => { charger() }, [])
 
@@ -62,6 +70,16 @@ export default function Admin() {
         <p className="muted">Chargement...</p>
       ) : (
         <>
+          {/* Recalcul automatique des cotes */}
+          <div className="section-titre">🎲 Cotes</div>
+          <div className="card">
+            <p className="muted" style={{ marginTop: 0 }}>
+              Recalcule automatiquement les cotes de tous les matchs (selon la forme des équipes).
+              Les paris déjà posés sont mis à jour, sauf à moins de 2h du match.
+            </p>
+            <button onClick={recalculerCotes}>🎲 Recalculer toutes les cotes</button>
+          </div>
+
           {/* Saisie des scores */}
           <div className="section-titre">⚽ Saisir un score</div>
           {matchs.length === 0 ? (
