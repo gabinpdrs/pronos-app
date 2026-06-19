@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import Navbar from './components/Navbar'
@@ -8,6 +8,7 @@ import ChangePassword from './pages/ChangePassword'
 import Accueil from './pages/Accueil'
 import Pronos from './pages/Pronos'
 import Resultats from './pages/Resultats'
+import Admin from './pages/Admin'
 
 export default function App() {
   const { session, profil } = useAuth()
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="/" element={<ProtectedRoute><Accueil /></ProtectedRoute>} />
         <Route path="/paris" element={<ProtectedRoute><Pronos /></ProtectedRoute>} />
         <Route path="/resultats" element={<ProtectedRoute><Resultats /></ProtectedRoute>} />
+        <Route path="/admin" element={<ProtectedRoute>{profil?.is_admin ? <Admin /> : <Navigate to="/" replace />}</ProtectedRoute>} />
       </Routes>
 
       {afficherNavbar && <Navbar />}

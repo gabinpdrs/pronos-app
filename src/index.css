@@ -270,6 +270,10 @@ button.secondaire { background: #64748b; }
 .resultat-ligne:last-child { border-bottom: none; }
 .score-final { font-weight: 800; font-size: 16px; background: var(--card-2); color: var(--accent-2); padding: 4px 10px; border-radius: 8px; }
 .tag-gagne { color: var(--vert); font-weight: 700; font-size: 12px; }
+.btn-reclamer { width: auto; margin: 6px 0 0; padding: 8px 14px; font-size: 13px; font-weight: 800; color: #111; background: linear-gradient(135deg, #ffe34d, var(--jaune)); border-radius: 10px; }
+.btn-mini { width: auto; margin: 0; padding: 6px 12px; font-size: 16px; font-weight: 800; border-radius: 8px; }
+.btn-mini.rouge { background: var(--rouge); }
+.version-footer { text-align: center; font-size: 12px; color: var(--muted); margin: 18px 0 4px; }
 .tag-perdu { color: var(--rouge); font-weight: 700; font-size: 12px; }
 
 /* ---------- Navbar ---------- */

@@ -3,11 +3,18 @@ import { supabase } from '../supabaseClient'
 import { useAuth } from '../context/AuthContext'
 
 export default function Resultats() {
-  const { session, profil } = useAuth()
+  const { session, profil, rafraichirProfil } = useAuth()
   const [classement, setClassement] = useState([])
   const [termines, setTermines] = useState([])
   const [mesParis, setMesParis] = useState({})
   const [chargement, setChargement] = useState(true)
+
+  async function reclamer(pariId) {
+    const { error } = await supabase.rpc('reclamer_gain', { p_pari_id: pariId })
+    if (error) { alert(error.message); return }
+    await rafraichirProfil()
+    await charger()
+  }
 
   async function charger() {
     setChargement(true)
@@ -95,7 +102,9 @@ export default function Resultats() {
                       <div style={{ fontWeight: 600, marginTop: 4 }}>{m.dom?.nom} - {m.ext?.nom}</div>
                       {p ? (
                         p.statut === 'gagne'
-                          ? <span className="tag-gagne">✅ Gagné +{p.gain} 🪙</span>
+                          ? (p.reclame
+                              ? <span className="tag-gagne">✅ +{p.gain} 🪙 réclamé</span>
+                              : <button className="btn-reclamer" onClick={() => reclamer(p.id)}>🎁 Réclamer {p.gain} 🪙</button>)
                           : <span className="tag-perdu">❌ Perdu -{p.mise} 🪙</span>
                       ) : (
                         <span className="muted" style={{ fontSize: 12 }}>Pas de pari</span>

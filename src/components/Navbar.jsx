@@ -1,7 +1,9 @@
 import { NavLink } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
-// Barre de navigation en bas (3 onglets, style application mobile)
+// Barre de navigation en bas (style application mobile)
 export default function Navbar() {
+  const { profil } = useAuth()
   const classe = ({ isActive }) => (isActive ? 'actif' : '')
 
   return (
@@ -18,6 +20,13 @@ export default function Navbar() {
         <span className="ico">🏆</span>
         Résultats
       </NavLink>
+      {/* Admin : seulement pour les administrateurs */}
+      {profil?.is_admin && (
+        <NavLink to="/admin" className={classe}>
+          <span className="ico">🛠️</span>
+          Admin
+        </NavLink>
+      )}
     </nav>
   )
 }

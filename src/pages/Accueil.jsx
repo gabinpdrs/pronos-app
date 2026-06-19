@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import { useAuth } from '../context/AuthContext'
+import { VERSION } from '../version'
 
 // Forme récente (ex : "VVNDV") en pastilles colorées
 function FormeMini({ texte }) {
@@ -156,6 +157,7 @@ export default function Accueil() {
           )}
         </>
       )}
+      <p className="version-footer">📲 Version {VERSION}</p>
     </div>
   )
 }
