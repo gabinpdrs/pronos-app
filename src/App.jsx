@@ -8,6 +8,7 @@ import ChangePassword from './pages/ChangePassword'
 import Accueil from './pages/Accueil'
 import Pronos from './pages/Pronos'
 import Resultats from './pages/Resultats'
+import Tableau from './pages/Tableau'
 import Admin from './pages/Admin'
 
 export default function App() {
@@ -26,6 +27,7 @@ export default function App() {
         <Route path="/" element={<ProtectedRoute><Accueil /></ProtectedRoute>} />
         <Route path="/paris" element={<ProtectedRoute><Pronos /></ProtectedRoute>} />
         <Route path="/resultats" element={<ProtectedRoute><Resultats /></ProtectedRoute>} />
+        <Route path="/tableau" element={<ProtectedRoute><Tableau /></ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute>{profil?.is_admin ? <Admin /> : <Navigate to="/" replace />}</ProtectedRoute>} />
       </Routes>
 

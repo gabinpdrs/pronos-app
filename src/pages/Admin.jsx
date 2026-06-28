@@ -6,6 +6,7 @@ export default function Admin() {
   const [matchs, setMatchs] = useState([])
   const [joueurs, setJoueurs] = useState([])
   const [scores, setScores] = useState({})  // { matchId: { dom, ext } }
+  const [tab, setTab] = useState({})         // { matchId: teamId } qui passe aux t.a.b (matchs du tableau)
   const [ajout, setAjout] = useState({})     // { userId: montant }
   const [msg, setMsg] = useState(null)
   const [chargement, setChargement] = useState(true)
@@ -14,7 +15,7 @@ export default function Admin() {
     setChargement(true)
     const { data: m } = await supabase
       .from('matches')
-      .select('id, date_match, poule, cote_domicile, cote_nul, cote_exterieur, cote_score, dom:equipe_domicile(nom), ext:equipe_exterieur(nom)')
+      .select('id, date_match, poule, tour, cote_domicile, cote_nul, cote_exterieur, cote_score, dom:equipe_domicile(id,nom), ext:equipe_exterieur(id,nom)')
       .is('score_domicile', null)
       .order('date_match', { ascending: true })
     const { data: j } = await supabase.from('profiles').select('id, prenom, jetons').order('prenom')
@@ -38,10 +39,20 @@ export default function Admin() {
 
   async function validerScore(matchId) {
     setMsg(null)
+    const m = matchs.find((x) => x.id === matchId)
     const s = scores[matchId] || {}
     const d = parseInt(s.dom, 10), e = parseInt(s.ext, 10)
     if (Number.isNaN(d) || Number.isNaN(e)) { setMsg({ type: 'erreur', texte: 'Entre les deux scores.' }); return }
-    const { error } = await supabase.from('matches').update({ score_domicile: d, score_exterieur: e }).eq('id', matchId)
+
+    const maj = { score_domicile: d, score_exterieur: e }
+    // Match du tableau + égalité : il faut un vainqueur (tirs au but)
+    if (m?.tour && d === e) {
+      const pw = parseInt(tab[matchId], 10)
+      if (Number.isNaN(pw)) { setMsg({ type: 'erreur', texte: 'Match nul : choisis qui passe aux tirs au but.' }); return }
+      maj.gagnant_penalty = pw
+    }
+
+    const { error } = await supabase.from('matches').update(maj).eq('id', matchId)
     if (error) { setMsg({ type: 'erreur', texte: error.message }); return }
     setMsg({ type: 'succes', texte: '✅ Score enregistré ! Les paris sont réglés.' })
     await charger()
@@ -88,6 +99,7 @@ export default function Admin() {
             matchs.map((m) => (
               <div className="card" key={m.id}>
                 {m.poule && <span className="poule-badge">{m.poule}</span>}
+                {m.tour && <span className="poule-badge">🏆 {m.tour}</span>}
                 <div className="match-date">📅 {new Date(m.date_match).toLocaleString('fr-FR')}</div>
                 <div className="match-equipes">
                   <div className="equipe"><div className="equipe-nom">{m.dom?.nom}</div></div>
@@ -99,6 +111,16 @@ export default function Admin() {
                   <span className="tiret">-</span>
                   <input type="number" min="0" placeholder="0" value={scores[m.id]?.ext ?? ''} onChange={(e) => setScore(m.id, 'ext', e.target.value)} />
                 </div>
+                {m.tour && scores[m.id]?.dom !== undefined && scores[m.id]?.dom !== '' && scores[m.id]?.dom === scores[m.id]?.ext && (
+                  <div style={{ marginBottom: 8 }}>
+                    <p className="muted" style={{ margin: '0 0 4px' }}>Égalité → qui passe aux tirs au but ?</p>
+                    <select value={tab[m.id] ?? ''} onChange={(e) => setTab((t) => ({ ...t, [m.id]: e.target.value }))} style={{ width: '100%' }}>
+                      <option value="">— choisir —</option>
+                      <option value={m.dom?.id}>{m.dom?.nom}</option>
+                      <option value={m.ext?.id}>{m.ext?.nom}</option>
+                    </select>
+                  </div>
+                )}
                 <button onClick={() => validerScore(m.id)}>Valider le score</button>
               </div>
             ))

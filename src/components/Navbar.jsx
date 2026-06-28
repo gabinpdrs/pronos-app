@@ -20,6 +20,10 @@ export default function Navbar() {
         <span className="ico">🏆</span>
         Résultats
       </NavLink>
+      <NavLink to="/tableau" className={classe}>
+        <span className="ico">📊</span>
+        Tableau
+      </NavLink>
       {/* Admin : seulement pour les administrateurs */}
       {profil?.is_admin && (
         <NavLink to="/admin" className={classe}>
